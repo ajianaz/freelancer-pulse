@@ -1,0 +1,40 @@
+{
+  "name": "freelancer-pulse",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Chrome extension to clip & track freelance jobs from Upwork & Fiverr",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "prettier --check \"src/**/*.{ts,svelte}\"",
+    "lint:fix": "prettier --write \"src/**/*.{ts,svelte}\"",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run typecheck && npm run lint && npm run test",
+    "zip": "npm run build && cd dist && zip -r ../freelancer-pulse.zip ."
+  },
+  "dependencies": {
+    "svelte": "^5.25.0",
+    "svelte-routing": "^2.13.0"
+  },
+  "devDependencies": {
+    "@crxjs/vite-plugin": "^2.0.0-beta.25",
+    "@sveltejs/vite-plugin-svelte": "^5.0.3",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/svelte": "^5.2.0",
+    "@types/chrome": "^0.0.304",
+    "autoprefixer": "^10.4.21",
+    "jsdom": "^26.0.0",
+    "postcss": "^8.5.3",
+    "prettier": "^3.5.3",
+    "prettier-plugin-svelte": "^3.3.3",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.0",
+    "vitest": "^3.0.9"
+  }
+}

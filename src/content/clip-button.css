@@ -1,0 +1,14 @@
+/* Clip button styles injected into job pages */
+.fp-clip-btn {
+  @apply inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg;
+  @apply bg-pulse-600 text-white hover:bg-pulse-700 transition-colors cursor-pointer;
+  @apply border-none outline-none;
+}
+
+.fp-clip-btn:active {
+  @apply bg-pulse-800;
+}
+
+.fp-clip-btn.fp-clipped {
+  @apply bg-green-600 hover:bg-green-700;
+}

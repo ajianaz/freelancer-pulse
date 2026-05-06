@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "types": ["chrome", "vitest/globals", "@testing-library/jest-dom"],
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "paths": {
+      "$lib/*": ["./src/lib/*"],
+      "$popup/*": ["./src/popup/*"],
+      "$background/*": ["./src/background/*"],
+      "$content/*": ["./src/content/*"],
+      "$tests/*": ["./src/__tests__/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.svelte"],
+  "exclude": ["node_modules", "dist"]
+}
