@@ -86,11 +86,23 @@ console.log('[Freelancer Pulse] Service worker loaded — v0.0.1');
 
 /** Handle CHECK_JOB message — check if URL already clipped */
 async function handleCheckJob(
-  data: { url: string },
+  data: { url: string; fullUrl: string },
   sendResponse: (response: unknown) => void,
 ): Promise<void> {
   try {
-    const existing = await findJobByUrl(data.url);
+    // Try exact match first, then base URL match
+    let existing = await findJobByUrl(data.fullUrl);
+    if (!existing) existing = await findJobByUrl(data.url);
+    if (!existing) {
+      // Also try matching any stored job URL that starts with the base URL
+      const { getJobs } = await import('$lib/storage');
+      const jobs = await getJobs();
+      existing = jobs.find((j) => {
+        const jobBase = j.url.split('?')[0];
+        const checkBase = data.url.split('?')[0];
+        return jobBase === checkBase;
+      }) ?? null;
+    }
     sendResponse({
       type: 'CHECK_RESULT',
       data: { exists: !!existing },

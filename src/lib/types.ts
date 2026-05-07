@@ -152,7 +152,7 @@ export interface TabInfoMessage {
 
 export interface CheckJobMessage {
   type: 'CHECK_JOB';
-  data: { url: string };
+  data: { url: string; fullUrl: string };
 }
 
 export interface CheckResultMessage {

@@ -161,10 +161,12 @@ init();
 /** Check if current URL is already clipped */
 async function checkAlreadyClipped(): Promise<boolean> {
   try {
-    const url = window.location.href;
+    // Use pathname only to avoid query param mismatches
+    const url = window.location.origin + window.location.pathname;
+    const fullUrl = window.location.href;
     const response = await chrome.runtime.sendMessage({
       type: 'CHECK_JOB',
-      data: { url },
+      data: { url, fullUrl },
     });
     return response?.data?.exists ?? false;
   } catch {
