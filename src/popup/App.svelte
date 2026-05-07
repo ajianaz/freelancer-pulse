@@ -54,13 +54,15 @@
   async function loadJobs() {
     try {
       jobs = await getJobs();
+      console.log('[FP Popup] Loaded', jobs.length, 'jobs:', jobs);
       stats = await getStats();
       computeWeeklyStats();
     } catch (err) {
-      console.error('[Freelancer Pulse] Failed to load jobs:', err);
+      console.error('[FP Popup] Failed to load jobs:', err);
       showToast('Failed to load jobs', 'error');
     } finally {
       loading = false;
+      console.log('[FP Popup] loading =', loading, 'selectedJob =', selectedJob);
     }
   }
 
@@ -131,7 +133,9 @@
 
   // ─── Event Handlers ──────────────────────────────────
   function selectJob(job: ClippedJob) {
+    console.log('[FP Popup] selectJob:', job.id, job.title);
     selectedJob = job;
+    console.log('[FP Popup] selectedJob set:', selectedJob);
   }
 
   function deselectJob() {
