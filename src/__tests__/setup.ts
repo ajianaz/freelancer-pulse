@@ -1,7 +1,8 @@
 /// <reference types="vitest" />
 import '@testing-library/jest-dom/vitest';
 
-// Mock chrome API for tests
+// ─── Chrome API Mock ────────────────────────────────────
+
 const storage: Record<string, unknown> = {};
 
 const chromeMock = {
@@ -9,6 +10,7 @@ const chromeMock = {
     sendMessage: vi.fn(),
     onMessage: {
       addListener: vi.fn(),
+      removeListener: vi.fn(),
     },
     getURL: (path: string) => `chrome-extension://mock-id/${path}`,
   },
@@ -16,7 +18,7 @@ const chromeMock = {
     local: {
       get: vi.fn((keys: string | string[] | null) => {
         const result: Record<string, unknown> = {};
-        if (!keys) return result;
+        if (!keys) return Promise.resolve(result);
         const keyList = typeof keys === 'string' ? [keys] : keys;
         for (const k of keyList) {
           if (k in storage) result[k] = storage[k];
@@ -32,6 +34,11 @@ const chromeMock = {
         for (const k of keyList) delete storage[k];
         return Promise.resolve();
       }),
+      getBytesInUse: vi.fn(() => Promise.resolve(0)),
+    },
+    onChanged: {
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
     },
   },
   tabs: {
@@ -41,3 +48,10 @@ const chromeMock = {
 };
 
 Object.assign(globalThis, { chrome: chromeMock });
+
+// Reset storage between tests
+afterEach(() => {
+  for (const key of Object.keys(storage)) {
+    delete storage[key];
+  }
+});

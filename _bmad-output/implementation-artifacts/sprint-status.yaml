@@ -51,47 +51,47 @@ development_status:
   #       Svelte 5, Vite, CI
   # ═══════════════════════════════════════════════════════════
 
-  epic-1: backlog
+  epic-1: in-progress
 
   # --- S1.1: Project scaffold with Vite + CRXJS + Svelte 5 (2 pts, P0) ---
   # AC: npm run dev loads extension in Chrome; npm run build produces dist/
   # Depends: none
-  1-1-project-scaffold-vite-crxjs-svelte5: backlog
+  1-1-project-scaffold-vite-crxjs-svelte5: done
 
   # --- S1.2: Manifest V3 configuration (1 pt, P0) ---
   # AC: manifest.json valid; permissions; content_scripts for upwork + fiverr
   # Depends: S1.1
-  1-2-manifest-v3-configuration: backlog
+  1-2-manifest-v3-configuration: done
 
   # --- S1.3: Shared types & constants (1 pt, P0) ---
   # AC: ClippedJob, JobStatus, Settings interfaces; status color map
   # Depends: S1.1
-  1-3-shared-types-and-constants: backlog
+  1-3-shared-types-and-constants: done
 
   # --- S1.4: Storage service layer (2 pts, P0) ---
   # AC: CRUD on chrome.storage.local; findJobByUrl; getStats; getStorageUsage
   # Depends: S1.3
-  1-4-storage-service-layer: backlog
+  1-4-storage-service-layer: done
 
   # --- S1.5: CI pipeline GitHub Actions (1 pt, P0) ---
   # AC: On push: typecheck + lint + test + build; upload dist/
   # Depends: S1.1
-  1-5-ci-pipeline-github-actions: backlog
+  1-5-ci-pipeline-github-actions: done
 
   # --- S1.6: Popup shell empty state (1 pt, P0) ---
   # AC: Click icon → popup 350px; branded header + empty state
   # Depends: S1.1
-  1-6-popup-shell-empty-state: backlog
+  1-6-popup-shell-empty-state: done
 
   # --- S1.7: Background service worker shell (1 pt, P0) ---
   # AC: service_worker registered; responds to ping message
   # Depends: S1.1
-  1-7-background-service-worker-shell: backlog
+  1-7-background-service-worker-shell: done
 
   # --- S1.8: Unit test setup (1 pt, P0) ---
   # AC: Vitest + jsdom + testing-library configured; sample test passes
   # Depends: S1.1
-  1-8-unit-test-setup: backlog
+  1-8-unit-test-setup: done
 
   epic-1-retrospective: optional
 

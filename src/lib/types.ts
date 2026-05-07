@@ -1,108 +1,155 @@
 /**
  * Freelancer Pulse — Core Type Definitions
- * v0.0.1 — Phase 1 placeholder
+ * v0.0.1
  */
+
+// ─── Platform ────────────────────────────────────────────
 
 /** Supported job platforms */
 export type Platform = 'upwork' | 'fiverr';
 
+// ─── Pipeline Status ────────────────────────────────────
+
 /** Job listing status in the pipeline */
-export type JobStatus = 'saved' | 'applied' | 'interviewed' | 'offered' | 'rejected' | 'archived';
+export type JobStatus =
+  | 'clipped'
+  | 'applied'
+  | 'interviewed'
+  | 'offered'
+  | 'hired'
+  | 'rejected'
+  | 'closed';
+
+/** Ordered pipeline statuses */
+export const PIPELINE_STATUSES: JobStatus[] = [
+  'clipped',
+  'applied',
+  'interviewed',
+  'offered',
+  'hired',
+];
+
+/** Terminal statuses */
+export const TERMINAL_STATUSES: JobStatus[] = ['rejected', 'closed'];
+
+/** All statuses */
+export const ALL_STATUSES: JobStatus[] = [...PIPELINE_STATUSES, ...TERMINAL_STATUSES];
+
+// ─── Budget ─────────────────────────────────────────────
 
 /** Currency codes */
 export type Currency = 'USD' | 'EUR' | 'GBP' | 'IDR' | string;
 
 /** Budget type */
+export type BudgetType = 'fixed' | 'hourly' | 'unknown';
+
+/** Parsed budget information */
 export interface Budget {
-  min: number;
-  max: number;
+  raw: string;           // Original text, e.g. "$500-$1,000"
+  min: number | null;
+  max: number | null;
   currency: Currency;
-  type: 'fixed' | 'hourly';
+  type: BudgetType;
 }
+
+// ─── Job ─────────────────────────────────────────────────
 
 /** A clipped job listing */
 export interface ClippedJob {
   id: string;
   platform: Platform;
-  externalId: string;
   title: string;
-  description: string;
-  client: {
-    name: string;
-    rating?: number;
-    reviewCount?: number;
-    country?: string;
-  };
-  budget: Budget;
-  skills: string[];
-  tags: string[];
   url: string;
-  postedAt: string; // ISO 8601
-  clippedAt: string; // ISO 8601
+  description: string;
+  budget: Budget;
+  clientName: string;
+  postedDate: string;     // ISO 8601 or null
+  clippedAt: string;      // ISO 8601
   status: JobStatus;
-  notes?: string;
+  tags: string[];
+  notes: string;
 }
 
-/** Job statistics */
-export interface JobStats {
+// ─── Parser Result ───────────────────────────────────────
+
+/** Result from a platform-specific parser */
+export interface ParserResult {
+  platform: Platform;
+  title: string;
+  url: string;
+  budgetRaw?: string;
+  budgetMin?: number;
+  budgetMax?: number;
+  budgetType?: BudgetType;
+  clientName?: string;
+  postedDate?: string;
+  description?: string;
+  tags: string[];
+}
+
+// ─── Statistics ──────────────────────────────────────────
+
+/** Pipeline statistics */
+export interface PipelineStats {
   total: number;
   byPlatform: Record<Platform, number>;
   byStatus: Record<JobStatus, number>;
-  bySkill: Record<string, number>;
-  avgBudget: Budget | null;
 }
 
-/** Chrome storage schema */
-export interface StorageSchema {
-  jobs: ClippedJob[];
-  settings: AppSettings;
+/** Weekly summary stats */
+export interface WeeklyStats {
+  clipped: number;
+  applied: number;
+  hired: number;
+  weekStart: string; // ISO date of Monday
 }
+
+// ─── Settings ────────────────────────────────────────────
 
 /** Application settings */
 export interface AppSettings {
   darkMode: boolean;
-  currency: Currency;
-  autoArchiveDays: number;
 }
+
+// ─── Storage ─────────────────────────────────────────────
+
+/** Chrome storage schema */
+export interface StorageSchema {
+  fp_jobs: ClippedJob[];
+  fp_settings: AppSettings;
+}
+
+// ─── Messages ────────────────────────────────────────────
 
 /** Message types between content script, popup, and service worker */
 export type MessageType =
   | 'CLIP_JOB'
-  | 'GET_JOBS'
-  | 'GET_STATS'
-  | 'UPDATE_JOB'
-  | 'DELETE_JOB'
-  | 'OPEN_POPUP';
+  | 'CLIP_RESULT'
+  | 'GET_CURRENT_TAB_INFO'
+  | 'TAB_INFO'
+  | 'PING';
 
 export interface ClipJobMessage {
   type: 'CLIP_JOB';
-  payload: Omit<ClippedJob, 'id' | 'clippedAt' | 'status'>;
+  data: ParserResult;
 }
 
-export interface GetJobsMessage {
-  type: 'GET_JOBS';
-  payload?: {
-    filter?: Partial<Pick<ClippedJob, 'platform' | 'status'>>;
-    sort?: 'date' | 'budget' | 'title';
-    order?: 'asc' | 'desc';
-  };
+export interface ClipResultMessage {
+  type: 'CLIP_RESULT';
+  data: { ok: boolean; job?: ClippedJob; error?: string };
 }
 
-export interface UpdateJobMessage {
-  type: 'UPDATE_JOB';
-  payload: {
-    id: string;
-    updates: Partial<ClippedJob>;
-  };
+export interface PingMessage {
+  type: 'PING';
 }
 
-export interface DeleteJobMessage {
-  type: 'DELETE_JOB';
-  payload: { id: string };
+export interface TabInfoMessage {
+  type: 'TAB_INFO';
+  data: { platform: Platform | null; url: string; canClip: boolean };
 }
 
 export type ExtensionMessage =
   | ClipJobMessage
-  | GetJobsMessage
-  | UpdateJobMessage
-  | DeleteJobMessage;
+  | ClipResultMessage
+  | PingMessage
+  | TabInfoMessage;
