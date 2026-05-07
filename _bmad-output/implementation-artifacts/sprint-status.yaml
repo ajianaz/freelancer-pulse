@@ -101,49 +101,49 @@ development_status:
   #       clip with one click
   # ═══════════════════════════════════════════════════════════
 
-  epic-2: backlog
+  epic-2: in-progress
 
   # --- S2.1: Base parser class with resilience (2 pts, P0) ---
   # AC: Abstract parser with canParse(), extract(), multi-selector fallback,
   #     MutationObserver wait
   # Depends: S1.3
-  2-1-base-parser-class-resilience: backlog
+  2-1-base-parser-class-resilience: done
 
   # --- S2.2: Upwork parser (3 pts, P0) ---
   # AC: Extract title, budget, client, description, tags; test with 5+ fixtures
   # Depends: S2.1
-  2-2-upwork-parser: backlog
+  2-2-upwork-parser: done
 
   # --- S2.3: Fiverr parser (3 pts, P0) ---
   # AC: Extract gig title, price, seller, rating; test with 5+ fixtures
   # Depends: S2.1
-  2-3-fiverr-parser: backlog
+  2-3-fiverr-parser: done
 
   # --- S2.4: Content script URL detection & routing (1 pt, P0) ---
   # AC: Detect upwork vs fiverr via URL; route to parser; no injection elsewhere
   # Depends: S2.2, S2.3
-  2-4-content-script-url-detection-routing: backlog
+  2-4-content-script-url-detection-routing: done
 
   # --- S2.5: Budget format normalizer (2 pts, P0) ---
   # AC: Parse "$500-$1000", "$50/hr", "Not specified" → { min, max, type }
   # Depends: S1.3
-  2-5-budget-format-normalizer: backlog
+  2-5-budget-format-normalizer: done
 
   # --- S2.6: Floating clip button (2 pts, P0) ---
   # AC: Inject styled button on supported pages; states: default, loading,
   #     clipped, error
   # Depends: S2.4
-  2-6-floating-clip-button: backlog
+  2-6-floating-clip-button: done
 
   # --- S2.7: Clip flow end-to-end (3 pts, P0) ---
   # AC: Click clip → extract → dedup URL → save → toast; < 50ms perceived
   # Depends: S2.6, S1.4
-  2-7-clip-flow-end-to-end: backlog
+  2-7-clip-flow-end-to-end: done
 
   # --- S2.8: Clip via popup action (2 pts, P0) ---
   # AC: Popup shows "Clip this job" on supported page; clips current tab
   # Depends: S2.4, S1.4
-  2-8-clip-via-popup-action: backlog
+  2-8-clip-via-popup-action: done
 
   epic-2-retrospective: optional
 
