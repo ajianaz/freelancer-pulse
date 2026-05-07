@@ -14,9 +14,12 @@
   }
 
   let { job, onBack, onUpdate, onDelete }: Props = $props();
-  let notes = $state(job.notes);
-  let showDeleteConfirm = $state(false);
-  let showStatusDropdown = $state(false);
+  let localNotes = $state(job.notes);
+
+  // Sync localNotes when job changes
+  $effect(() => {
+    localNotes = job.notes;
+  });
 
   async function changeStatus(status: JobStatus) {
     showStatusDropdown = false;
@@ -25,9 +28,9 @@
   }
 
   async function saveNotes() {
-    if (notes !== job.notes) {
-      await updateJob(job.id, { notes });
-      onUpdate({ ...job, notes });
+    if (localNotes !== job.notes) {
+      await updateJob(job.id, { notes: localNotes });
+      onUpdate({ ...job, notes: localNotes });
     }
   }
 
@@ -136,7 +139,7 @@
         class="mt-1 w-full p-2 text-[12px] border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 resize-none focus:outline-none focus:ring-1 focus:ring-blue-400"
         rows="3"
         placeholder="Add notes..."
-        bind:value={notes}
+        bind:value={localNotes}
         onblur={saveNotes}
       ></textarea>
     </div>
