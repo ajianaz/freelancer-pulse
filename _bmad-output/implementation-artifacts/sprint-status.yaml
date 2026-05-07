@@ -241,32 +241,32 @@ development_status:
   # Goal: Error handling, empty states, dark mode, CWS submission
   # ═══════════════════════════════════════════════════════════
 
-  epic-5: backlog
+  epic-5: in-progress
 
   # --- S5.1: Error handling parser failures (1 pt, P0) ---
   # AC: Graceful degradation; partial data saved; error toast; never crash
   # Depends: S2.2, S2.3
-  5-1-error-handling-parser-failures: backlog
+  5-1-error-handling-parser-failures: done
 
   # --- S5.2: Empty state polish (1 pt, P0) ---
   # AC: Illustration + instruction text + platform icons
   # Depends: S3.2
-  5-2-empty-state-polish: backlog
+  5-2-empty-state-polish: done
 
   # --- S5.3: Loading states (1 pt, P0) ---
   # AC: Skeleton/spinner while storage reads; no layout shift
   # Depends: S3.2
-  5-3-loading-states: backlog
+  5-3-loading-states: done
 
   # --- S5.4: Dark mode CSS variables (2 pts, P2) ---
   # AC: CSS custom properties; prefers-color-scheme detection; toggle
   # Depends: S3.1
-  5-4-dark-mode-css-variables: backlog
+  5-4-dark-mode-css-variables: done
 
   # --- S5.5: CWS assets and listing (1 pt, P0) ---
   # AC: Icons 16/48/128; screenshots (5); title + description; privacy policy
   # Depends: All
-  5-5-cws-assets-and-listing: backlog
+  5-5-cws-assets-and-listing: done
 
   # --- S5.6: Manual QA pass (2 pts, P0) ---
   # AC: Test 10+ Upwork + 10+ Fiverr pages; verify all flows; fix bugs

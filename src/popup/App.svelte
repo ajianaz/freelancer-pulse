@@ -1,12 +1,15 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { getJobs, getStorageUsage, getStats } from '$lib/storage';
+  import { getJobs, getStorageUsage, getStats, getSettings } from '$lib/storage';
   import type { ClippedJob, PipelineStats, Platform, JobStatus } from '$lib/types';
   import JobCard from './components/JobCard.svelte';
   import JobDetail from './components/JobDetail.svelte';
   import Toast from './components/Toast.svelte';
   import { STATUS_COLORS, STATUS_LABELS, STORAGE_QUOTA_BYTES, SEARCH_DEBOUNCE_MS } from '$lib/constants';
   import { formatBudget, timeAgo } from '$lib/utils';
+
+  // Dark mode
+  let isDark = $state(false);
 
   // ─── State ────────────────────────────────────────────
   let jobs: ClippedJob[] = $state([]);
@@ -31,6 +34,15 @@
 
   // ─── Lifecycle ────────────────────────────────────────
   onMount(async () => {
+    // Dark mode detection
+    const settings = await getSettings();
+    if (settings.darkMode) {
+      isDark = true;
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      isDark = true;
+    }
+    if (isDark) document.documentElement.classList.add('dark');
+
     await loadJobs();
     await loadStorageUsage();
   });

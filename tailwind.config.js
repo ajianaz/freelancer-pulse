@@ -18,6 +18,15 @@ export default {
           900: "#1e3a8a",
         },
       },
+      width: {
+        popup: "350px",
+      },
+      minHeight: {
+        popup: "480px",
+      },
+      maxHeight: {
+        popup: "600px",
+      },
     },
   },
   plugins: [],
