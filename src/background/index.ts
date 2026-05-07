@@ -19,6 +19,10 @@ chrome.runtime.onMessage.addListener(
         handleClipJob(message.data, sendResponse);
         return true; // async — keep channel open
 
+      case 'CHECK_JOB':
+        handleCheckJob(message.data, sendResponse);
+        return true; // async
+
       default:
         sendResponse({ error: `Unknown message type: ${(message as { type: string }).type}` });
         return false;
@@ -79,3 +83,19 @@ async function handleClipJob(
 }
 
 console.log('[Freelancer Pulse] Service worker loaded — v0.0.1');
+
+/** Handle CHECK_JOB message — check if URL already clipped */
+async function handleCheckJob(
+  data: { url: string },
+  sendResponse: (response: unknown) => void,
+): Promise<void> {
+  try {
+    const existing = await findJobByUrl(data.url);
+    sendResponse({
+      type: 'CHECK_RESULT',
+      data: { exists: !!existing },
+    });
+  } catch {
+    sendResponse({ type: 'CHECK_RESULT', data: { exists: false } });
+  }
+}

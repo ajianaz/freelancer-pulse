@@ -125,6 +125,8 @@ export interface StorageSchema {
 export type MessageType =
   | 'CLIP_JOB'
   | 'CLIP_RESULT'
+  | 'CHECK_JOB'
+  | 'CHECK_RESULT'
   | 'GET_CURRENT_TAB_INFO'
   | 'TAB_INFO'
   | 'PING';
@@ -148,8 +150,20 @@ export interface TabInfoMessage {
   data: { platform: Platform | null; url: string; canClip: boolean };
 }
 
+export interface CheckJobMessage {
+  type: 'CHECK_JOB';
+  data: { url: string };
+}
+
+export interface CheckResultMessage {
+  type: 'CHECK_RESULT';
+  data: { exists: boolean };
+}
+
 export type ExtensionMessage =
   | ClipJobMessage
   | ClipResultMessage
+  | CheckJobMessage
+  | CheckResultMessage
   | PingMessage
   | TabInfoMessage;

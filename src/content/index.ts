@@ -49,6 +49,15 @@ function injectClipButton(parser: BaseParser): void {
   btn.textContent = '📌 Clip this Job';
   btn.type = 'button';
 
+  // Check if already clipped
+  checkAlreadyClipped().then((isClipped) => {
+    if (isClipped) {
+      btn.textContent = '✓ Already clipped';
+      btn.classList.add('fp-clipped');
+      btn.disabled = true;
+    }
+  });
+
   btn.addEventListener('click', async () => {
     btn.disabled = true;
     btn.textContent = '⏳ Clipping...';
@@ -148,3 +157,17 @@ function showPageToast(message: string, type: 'success' | 'warning' | 'error'): 
 
 // Initialize
 init();
+
+/** Check if current URL is already clipped */
+async function checkAlreadyClipped(): Promise<boolean> {
+  try {
+    const url = window.location.href;
+    const response = await chrome.runtime.sendMessage({
+      type: 'CHECK_JOB',
+      data: { url },
+    });
+    return response?.data?.exists ?? false;
+  } catch {
+    return false;
+  }
+}

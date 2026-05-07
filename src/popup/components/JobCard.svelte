@@ -20,12 +20,26 @@
     <p class="text-[13px] font-medium text-gray-900 dark:text-gray-100 leading-tight">
       {truncate(job.title, 60)}
     </p>
-    <span
-      class="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium text-white"
-      style="background-color: {STATUS_COLORS[job.status]}"
-    >
-      {STATUS_LABELS[job.status]}
-    </span>
+    <div class="flex items-center gap-1 shrink-0">
+      <a
+        href={job.url}
+        target="_blank"
+        rel="noopener"
+        class="text-gray-400 hover:text-blue-500"
+        title="Open on {job.platform === 'upwork' ? 'Upwork' : 'Fiverr'}"
+        onclick={(e) => e.stopPropagation()}
+      >
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+        </svg>
+      </a>
+      <span
+        class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium text-white"
+        style="background-color: {STATUS_COLORS[job.status]}"
+      >
+        {STATUS_LABELS[job.status]}
+      </span>
+    </div>
   </div>
   <div class="flex items-center gap-2 mt-1.5">
     <span
