@@ -153,52 +153,52 @@ development_status:
   #       detail view, notes
   # ═══════════════════════════════════════════════════════════
 
-  epic-3: backlog
+  epic-3: in-progress
 
   # --- S3.1: Popup layout & header (1 pt, P0) ---
   # AC: 350px width; branded header with logo + settings icon
   # Depends: S1.6
-  3-1-popup-layout-header: backlog
+  3-1-popup-layout-header: done
 
   # --- S3.2: Job list component (2 pts, P0) ---
   # AC: Renders ClippedJob[] sorted by date; scrollable; shows all card fields
   # Depends: S3.1, S1.4
-  3-2-job-list-component: backlog
+  3-2-job-list-component: done
 
   # --- S3.3: Job card collapsed (2 pts, P0) ---
   # AC: Truncated title; platform badge; budget; status pill; notes preview
   # Depends: S3.2
-  3-3-job-card-collapsed: backlog
+  3-3-job-card-collapsed: done
 
   # --- S3.4: Job detail expanded (3 pts, P0) ---
   # AC: Click card → expand: full title, budget, client, description, tags
   # Depends: S3.3
-  3-4-job-detail-expanded: backlog
+  3-4-job-detail-expanded: done
 
   # --- S3.5: Status dropdown (2 pts, P0) ---
   # AC: Dropdown with 7 statuses; color dots; instant save; stats update
   # Depends: S3.4
-  3-5-status-dropdown: backlog
+  3-5-status-dropdown: done
 
   # --- S3.6: Notes editor (1 pt, P1) ---
   # AC: Textarea in detail view; auto-save on blur; persisted
   # Depends: S3.4
-  3-6-notes-editor: backlog
+  3-6-notes-editor: done
 
   # --- S3.7: Delete job with confirmation (1 pt, P1) ---
   # AC: Delete button → dialog → confirm removes from storage + list
   # Depends: S3.4
-  3-7-delete-job-confirmation: backlog
+  3-7-delete-job-confirmation: done
 
   # --- S3.8: Storage usage footer (1 pt, P1) ---
   # AC: Clip count + storage %; progress bar; amber 80%, red 95%
   # Depends: S3.2
-  3-8-storage-usage-footer: backlog
+  3-8-storage-usage-footer: done
 
   # --- S3.9: Toast notification system (1 pt, P0) ---
   # AC: Success/warning/error toasts; auto-dismiss 3s; no stacking
   # Depends: S3.1
-  3-9-toast-notification-system: backlog
+  3-9-toast-notification-system: done
 
   epic-3-retrospective: optional
 

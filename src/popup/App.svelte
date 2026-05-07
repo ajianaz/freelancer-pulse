@@ -1,20 +1,68 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { getJobs } from '$lib/storage';
+  import { getJobs, getStorageUsage } from '$lib/storage';
   import type { ClippedJob } from '$lib/types';
+  import JobCard from './components/JobCard.svelte';
+  import JobDetail from './components/JobDetail.svelte';
+  import Toast from './components/Toast.svelte';
+  import { STORAGE_QUOTA_BYTES } from '$lib/constants';
 
   let jobs: ClippedJob[] = $state([]);
   let loading = $state(true);
+  let selectedJob: ClippedJob | null = $state(null);
+  let toast = $state<{ message: string; type: 'success' | 'warning' | 'error' } | null>(null);
+  let storagePercent = $state(0);
 
   onMount(async () => {
+    await loadJobs();
+    await loadStorageUsage();
+  });
+
+  async function loadJobs() {
     try {
       jobs = await getJobs();
     } catch (err) {
       console.error('[Freelancer Pulse] Failed to load jobs:', err);
+      showToast('Failed to load jobs', 'error');
     } finally {
       loading = false;
     }
-  });
+  }
+
+  async function loadStorageUsage() {
+    try {
+      const { usedBytes } = await getStorageUsage();
+      storagePercent = Math.round((usedBytes / STORAGE_QUOTA_BYTES) * 100);
+    } catch {
+      // Storage usage is non-critical
+    }
+  }
+
+  function selectJob(job: ClippedJob) {
+    selectedJob = job;
+  }
+
+  function deselectJob() {
+    selectedJob = null;
+  }
+
+  function handleJobUpdate(updatedJob: ClippedJob) {
+    const idx = jobs.findIndex((j) => j.id === updatedJob.id);
+    if (idx !== -1) jobs[idx] = updatedJob;
+    selectedJob = updatedJob;
+  }
+
+  function handleJobDelete(id: string) {
+    jobs = jobs.filter((j) => j.id !== id);
+    selectedJob = null;
+    showToast('Job deleted', 'success');
+    loadStorageUsage();
+  }
+
+  function showToast(message: string, type: 'success' | 'warning' | 'error') {
+    toast = { message, type };
+    setTimeout(() => (toast = null), 3000);
+  }
 </script>
 
 <div class="flex flex-col h-full min-h-[480px] max-h-[600px] bg-white dark:bg-gray-900">
@@ -33,11 +81,25 @@
     </button>
   </header>
 
+  <!-- Toast -->
+  {#if toast}
+    <div class="shrink-0">
+      <Toast message={toast.message} type={toast.type} />
+    </div>
+  {/if}
+
   <!-- Content -->
   {#if loading}
     <div class="flex-1 flex items-center justify-center">
       <div class="animate-spin w-6 h-6 border-2 border-gray-300 border-t-blue-500 rounded-full"></div>
     </div>
+  {:else if selectedJob}
+    <JobDetail
+      job={selectedJob}
+      onBack={deselectJob}
+      onUpdate={handleJobUpdate}
+      onDelete={handleJobDelete}
+    />
   {:else if jobs.length === 0}
     <!-- Empty State -->
     <div class="flex-1 flex flex-col items-center justify-center px-6 py-8">
@@ -56,14 +118,23 @@
       </div>
     </div>
   {:else}
-    <!-- Job list placeholder (Epic 3 will replace this) -->
-    <div class="flex-1 overflow-y-auto p-2">
-      <p class="text-xs text-gray-500 text-center py-4">{jobs.length} job(s) clipped</p>
+    <!-- Job list -->
+    <div class="flex-1 overflow-y-auto p-2 space-y-2">
+      {#each jobs as job (job.id)}
+        <JobCard {job} onSelect={selectJob} />
+      {/each}
     </div>
   {/if}
 
-  <!-- Footer -->
-  <footer class="shrink-0 px-4 h-8 border-t border-gray-200 dark:border-gray-700 flex items-center text-[11px] text-gray-400">
-    <span>v0.0.1</span>
+  <!-- Footer — Storage usage -->
+  <footer class="shrink-0 px-4 h-8 border-t border-gray-200 dark:border-gray-700 flex items-center gap-2 text-[11px] text-gray-400">
+    <span>💾 {jobs.length} clips</span>
+    <div class="flex-1 h-1 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+      <div
+        class="h-full rounded-full transition-all {storagePercent > 95 ? 'bg-red-500' : storagePercent > 80 ? 'bg-amber-500' : 'bg-gray-300 dark:bg-gray-600'}"
+        style="width: {Math.min(storagePercent, 100)}%"
+      ></div>
+    </div>
+    <span>{storagePercent}%</span>
   </footer>
 </div>
