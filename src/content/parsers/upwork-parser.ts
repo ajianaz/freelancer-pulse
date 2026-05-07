@@ -8,7 +8,11 @@ import type { ParserResult } from '$lib/types';
 
 export class UpworkParser extends BaseParser {
   canParse(url: string): boolean {
-    return /upwork\.com\/jobs\//i.test(url) || /upwork\.com\/nx\/search\/jobs/i.test(url);
+    return /upwork\.com/i.test(url) && (
+      /\/nx\/find-work/i.test(url) ||
+      /\/nx\/search\/jobs/i.test(url) ||
+      /\/jobs\//i.test(url)
+    );
   }
 
   extract(): ParserResult {

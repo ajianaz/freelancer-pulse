@@ -43,6 +43,7 @@ export const PLATFORM_LABELS: Record<Platform, string> = {
 
 export const PLATFORM_PATTERNS: Record<Platform, RegExp[]> = {
   upwork: [
+    /upwork\.com\/nx\/find-work/i,
     /upwork\.com\/nx\/search\/jobs/i,
     /upwork\.com\/jobs\//i,
   ],
