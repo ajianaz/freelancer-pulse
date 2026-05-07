@@ -31,3 +31,13 @@ coverage/
 
 # Pi sessions
 .pi/
+
+# BMad framework (config & skills — not project artifacts)
+_bmad/
+.agents/
+
+# Claude
+.claude/
+
+# Open design
+open-design/
