@@ -31,6 +31,8 @@
 
   let searchTimeout: ReturnType<typeof setTimeout> | null = null;
   let debouncedQuery = $state('');
+  let showSettings = $state(false);
+  let darkModeSetting = $state(false);
 
   // ─── Lifecycle ────────────────────────────────────────
   onMount(async () => {
@@ -42,6 +44,7 @@
       isDark = true;
     }
     if (isDark) document.documentElement.classList.add('dark');
+    darkModeSetting = isDark;
 
     await loadJobs();
     await loadStorageUsage();
@@ -159,6 +162,17 @@
     toast = { message, type };
     setTimeout(() => (toast = null), 3000);
   }
+
+  async function toggleDarkMode() {
+    darkModeSetting = !darkModeSetting;
+    isDark = darkModeSetting;
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    await updateSettings({ darkMode: darkModeSetting });
+  }
 </script>
 
 <div class="flex flex-col h-full min-h-[480px] max-h-[600px] bg-white dark:bg-gray-900">
@@ -168,7 +182,7 @@
       <div class="w-5 h-5 rounded-full bg-green-500"></div>
       <h1 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Freelancer Pulse</h1>
     </div>
-    <button class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" title="Settings">
+    <button class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" title="Settings" onclick={() => (showSettings = !showSettings)}>
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -181,6 +195,23 @@
   {#if toast}
     <div class="shrink-0">
       <Toast message={toast.message} type={toast.type} />
+    </div>
+  {/if}
+
+  <!-- Settings panel -->
+  {#if showSettings}
+    <div class="shrink-0 px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+      <div class="flex items-center justify-between">
+        <span class="text-[12px] font-medium text-gray-700 dark:text-gray-300">Dark Mode</span>
+        <button
+          aria-label="Toggle dark mode"
+          class="relative w-10 h-5 rounded-full transition-colors {darkModeSetting ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-600'}"
+          onclick={toggleDarkMode}
+        >
+          <span class="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform {darkModeSetting ? 'translate-x-5' : ''}" ></span>
+        </button>
+      </div>
+      <p class="text-[11px] text-gray-400 mt-2">v0.0.1 — Freelancer Pulse</p>
     </div>
   {/if}
 
