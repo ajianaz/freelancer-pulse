@@ -47,7 +47,8 @@ checkedArtifacts:
 
 | # | Gap | Severity | Recommendation |
 |---|-----|----------|----------------|
-| G1 | CSP header verification for Upwork/Fiverr not yet confirmed | 🟡 Medium | Resolve BEFORE Epic 2 start; create a test extension to verify |
+| G1 | Upwork CSP header verified | ✅ RESOLVED | Content script injection confirmed safe |
+| Fiverr CSP verification | ⚠️ PENDING | Expected clear; verify before Fiverr parser work |
 
 ---
 
@@ -144,7 +145,7 @@ None. Architecture is comprehensive.
 
 | Risk | Likelihood | Impact | Mitigation |
 |------|-----------|--------|------------|
-| Upwork/Fiverr CSP blocks content script | Medium | Critical | **MUST verify before Epic 2** |
+| Upwork/Fiverr CSP blocks content script | Upwork: ✅ Verified | Critical | Fiverr: verify before S2.3 |
 | Upwork DOM changes before launch | Medium | High | Modular parser; test fixtures; ready to hotfix |
 | CRXJS beta plugin issues | Low | Medium | Lock version; have fallback to manual manifest |
 | chrome.storage.local insufficient | Low | Low | 10MB = ~20K jobs; add cleanup if needed |
@@ -167,11 +168,10 @@ None. Architecture is comprehensive.
 
 ### Decision
 
-**🟢 GO — with one prerequisite:**
+**🟢 GO**
 
-> **CSP Verification must be completed before starting Epic 2.**
-> Create a minimal test extension (manifest.json + alert on upwork.com) to confirm content script injection works.
-> This takes ~30 minutes and prevents 2 weeks of wasted effort.
+- Upwork CSP: ✅ Verified safe
+- Fiverr CSP: Verify before starting story S2.3 (Fiverr parser)
 
 ### Recommended Sprint Plan
 
@@ -189,7 +189,8 @@ Total estimated: **2-3 weeks** (aligned with PRD timeline).
 
 ## 9. Next Steps
 
-1. ✅ Resolve CSP blocker (Sprint 0)
-2. ✅ Run `bmad-sprint-planning` to create sprint status tracker
-3. ✅ Run `bmad-create-story` for S1.1 (first story)
-4. ✅ Begin implementation
+1. ✅ Upwork CSP verified
+2. ⏳ Verify Fiverr CSP before S2.3
+3. ✅ Run `bmad-sprint-planning` to create sprint status tracker
+4. ✅ Run `bmad-create-story` for S1.1 (first story)
+5. ✅ Begin implementation
