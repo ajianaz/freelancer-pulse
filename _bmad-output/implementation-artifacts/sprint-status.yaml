@@ -207,32 +207,32 @@ development_status:
   # Goal: Search jobs, filter by platform/status, pipeline stats
   # ═══════════════════════════════════════════════════════════
 
-  epic-4: backlog
+  epic-4: in-progress
 
   # --- S4.1: Search bar component (2 pts, P0) ---
   # AC: Substring match on title; case-insensitive; debounced 300ms
   # Depends: S3.2
-  4-1-search-bar-component: backlog
+  4-1-search-bar-component: done
 
   # --- S4.2: Platform filter tabs (1 pt, P0) ---
   # AC: Tabs: All | Upwork | Fiverr; combines with search
   # Depends: S3.2
-  4-2-platform-filter-tabs: backlog
+  4-2-platform-filter-tabs: done
 
   # --- S4.3: Status filter (1 pt, P1) ---
   # AC: Dropdown/tabs for status; combines with platform + search
   # Depends: S4.2
-  4-3-status-filter: backlog
+  4-3-status-filter: done
 
   # --- S4.4: Basic stats totals (2 pts, P0) ---
   # AC: Total clipped, by platform, by status; computed from storage
   # Depends: S3.2
-  4-4-basic-stats-totals: backlog
+  4-4-basic-stats-totals: done
 
   # --- S4.5: Weekly summary card (2 pts, P0) ---
   # AC: "This Week" card: X clipped, Y applied, Z hired; resets weekly
   # Depends: S4.4
-  4-5-weekly-summary-card: backlog
+  4-5-weekly-summary-card: done
 
   epic-4-retrospective: optional
 

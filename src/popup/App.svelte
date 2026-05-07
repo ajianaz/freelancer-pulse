@@ -1,26 +1,46 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { getJobs, getStorageUsage } from '$lib/storage';
-  import type { ClippedJob } from '$lib/types';
+  import { getJobs, getStorageUsage, getStats } from '$lib/storage';
+  import type { ClippedJob, PipelineStats, Platform, JobStatus } from '$lib/types';
   import JobCard from './components/JobCard.svelte';
   import JobDetail from './components/JobDetail.svelte';
   import Toast from './components/Toast.svelte';
-  import { STORAGE_QUOTA_BYTES } from '$lib/constants';
+  import { STATUS_COLORS, STATUS_LABELS, STORAGE_QUOTA_BYTES, SEARCH_DEBOUNCE_MS } from '$lib/constants';
+  import { formatBudget, timeAgo } from '$lib/utils';
 
+  // ─── State ────────────────────────────────────────────
   let jobs: ClippedJob[] = $state([]);
   let loading = $state(true);
   let selectedJob: ClippedJob | null = $state(null);
   let toast = $state<{ message: string; type: 'success' | 'warning' | 'error' } | null>(null);
   let storagePercent = $state(0);
 
+  // Search & filter
+  let searchQuery = $state('');
+  let platformFilter: Platform | 'all' = $state('all');
+  let statusFilter: JobStatus | 'all' = $state('all');
+  let stats: PipelineStats | null = $state(null);
+
+  // Weekly stats
+  let weeklyClipped = $state(0);
+  let weeklyApplied = $state(0);
+  let weeklyHired = $state(0);
+
+  let searchTimeout: ReturnType<typeof setTimeout> | null = null;
+  let debouncedQuery = $state('');
+
+  // ─── Lifecycle ────────────────────────────────────────
   onMount(async () => {
     await loadJobs();
     await loadStorageUsage();
   });
 
+  // ─── Data Loading ─────────────────────────────────────
   async function loadJobs() {
     try {
       jobs = await getJobs();
+      stats = await getStats();
+      computeWeeklyStats();
     } catch (err) {
       console.error('[Freelancer Pulse] Failed to load jobs:', err);
       showToast('Failed to load jobs', 'error');
@@ -34,10 +54,67 @@
       const { usedBytes } = await getStorageUsage();
       storagePercent = Math.round((usedBytes / STORAGE_QUOTA_BYTES) * 100);
     } catch {
-      // Storage usage is non-critical
+      // Non-critical
     }
   }
 
+  function computeWeeklyStats() {
+    const now = new Date();
+    const weekStart = new Date(now);
+    weekStart.setDate(now.getDate() - now.getDay() + 1); // Monday
+    weekStart.setHours(0, 0, 0, 0);
+
+    weeklyClipped = 0;
+    weeklyApplied = 0;
+    weeklyHired = 0;
+
+    for (const job of jobs) {
+      const clippedAt = new Date(job.clippedAt);
+      if (clippedAt >= weekStart) {
+        if (job.status === 'clipped') weeklyClipped++;
+        if (job.status === 'applied') weeklyApplied++;
+        if (job.status === 'hired') weeklyHired++;
+      }
+    }
+  }
+
+  // ─── Computed: Filtered Jobs ──────────────────────────
+  let filteredJobs = $derived.by(() => {
+    let result = [...jobs];
+
+    // Search filter
+    if (debouncedQuery) {
+      const q = debouncedQuery.toLowerCase();
+      result = result.filter(
+        (j) =>
+          j.title.toLowerCase().includes(q) ||
+          j.clientName.toLowerCase().includes(q) ||
+          j.tags.some((t) => t.toLowerCase().includes(q)),
+      );
+    }
+
+    // Platform filter
+    if (platformFilter !== 'all') {
+      result = result.filter((j) => j.platform === platformFilter);
+    }
+
+    // Status filter
+    if (statusFilter !== 'all') {
+      result = result.filter((j) => j.status === statusFilter);
+    }
+
+    return result;
+  });
+
+  // ─── Search debounce ─────────────────────────────────
+  $effect(() => {
+    if (searchTimeout) clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      debouncedQuery = searchQuery;
+    }, SEARCH_DEBOUNCE_MS);
+  });
+
+  // ─── Event Handlers ──────────────────────────────────
   function selectJob(job: ClippedJob) {
     selectedJob = job;
   }
@@ -50,13 +127,20 @@
     const idx = jobs.findIndex((j) => j.id === updatedJob.id);
     if (idx !== -1) jobs[idx] = updatedJob;
     selectedJob = updatedJob;
+    refreshStats();
   }
 
   function handleJobDelete(id: string) {
     jobs = jobs.filter((j) => j.id !== id);
     selectedJob = null;
     showToast('Job deleted', 'success');
+    refreshStats();
     loadStorageUsage();
+  }
+
+  async function refreshStats() {
+    stats = await getStats();
+    computeWeeklyStats();
   }
 
   function showToast(message: string, type: 'success' | 'warning' | 'error') {
@@ -118,11 +202,81 @@
       </div>
     </div>
   {:else}
+    <!-- Search bar -->
+    <div class="shrink-0 px-3 py-2 border-b border-gray-100 dark:border-gray-800">
+      <input
+        type="text"
+        placeholder="🔍 Search jobs..."
+        bind:value={searchQuery}
+        class="w-full px-3 py-1.5 text-[12px] bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-400 text-gray-900 dark:text-gray-100 placeholder-gray-400"
+      />
+    </div>
+
+    <!-- Weekly summary -->
+    <div class="shrink-0 px-3 py-2 border-b border-gray-100 dark:border-gray-800">
+      <p class="text-[11px] text-gray-400 mb-1.5">📊 This Week</p>
+      <div class="grid grid-cols-3 gap-2">
+        <div class="text-center">
+          <p class="text-[16px] font-bold text-gray-900 dark:text-gray-100">{weeklyClipped}</p>
+          <p class="text-[11px] text-gray-400">Clipped</p>
+        </div>
+        <div class="text-center">
+          <p class="text-[16px] font-bold text-blue-500">{weeklyApplied}</p>
+          <p class="text-[11px] text-gray-400">Applied</p>
+        </div>
+        <div class="text-center">
+          <p class="text-[16px] font-bold text-green-500">{weeklyHired}</p>
+          <p class="text-[11px] text-gray-400">Hired</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter tabs -->
+    <div class="shrink-0 flex items-center gap-1 px-3 py-1.5 border-b border-gray-100 dark:border-gray-800">
+      <button
+        class="px-2 py-1 text-[11px] rounded-md {platformFilter === 'all' ? 'bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900' : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800'}"
+        onclick={() => (platformFilter = 'all')}
+      >
+        All
+      </button>
+      <button
+        class="px-2 py-1 text-[11px] rounded-md {platformFilter === 'upwork' ? 'bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900' : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800'}"
+        onclick={() => (platformFilter = 'upwork')}
+      >
+        Upwork
+      </button>
+      <button
+        class="px-2 py-1 text-[11px] rounded-md {platformFilter === 'fiverr' ? 'bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900' : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800'}"
+        onclick={() => (platformFilter = 'fiverr')}
+      >
+        Fiverr
+      </button>
+      <div class="flex-1"></div>
+      <!-- Status filter -->
+      <select
+        class="text-[11px] px-2 py-1 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md text-gray-500 focus:outline-none"
+        bind:value={statusFilter}
+      >
+        <option value="all">All Status</option>
+        <option value="clipped">Clipped</option>
+        <option value="applied">Applied</option>
+        <option value="interviewed">Interviewed</option>
+        <option value="offered">Offered</option>
+        <option value="hired">Hired</option>
+        <option value="rejected">Rejected</option>
+        <option value="closed">Closed</option>
+      </select>
+    </div>
+
     <!-- Job list -->
     <div class="flex-1 overflow-y-auto p-2 space-y-2">
-      {#each jobs as job (job.id)}
-        <JobCard {job} onSelect={selectJob} />
-      {/each}
+      {#if filteredJobs.length === 0}
+        <p class="text-[12px] text-gray-400 text-center py-4">No jobs match your filters</p>
+      {:else}
+        {#each filteredJobs as job (job.id)}
+          <JobCard {job} onSelect={selectJob} />
+        {/each}
+      {/if}
     </div>
   {/if}
 
