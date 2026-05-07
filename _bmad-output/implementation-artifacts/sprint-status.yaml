@@ -1,0 +1,276 @@
+# generated: 2026-05-07
+# last_updated: 2026-05-07
+# project: freelancer-pulse
+# project_key: NOKEY
+# tracking_system: file-system
+# story_location: _bmad-output/implementation-artifacts
+
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#
+# Epic Status Transitions:
+#   - backlog → in-progress: Automatically when first story is created (via create-story)
+#   - in-progress → done: Manually when all stories reach 'done' status
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created in stories folder
+#   - in-progress: Developer actively working on implementation
+#   - review: Ready for code review (via Dev's code-review workflow)
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when first story is created
+# - Stories can be worked in parallel if team capacity allows
+# - Developer typically creates next story after previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+# - Recommended order: Epic 1 → Epic 2 → Epic 3 → Epic 4 → Epic 5
+# - All stories follow TDD: red → green → refactor
+
+generated: 2026-05-07
+last_updated: 2026-05-07
+project: freelancer-pulse
+project_key: NOKEY
+tracking_system: file-system
+story_location: _bmad-output/implementation-artifacts
+
+development_status:
+
+  # ═══════════════════════════════════════════════════════════
+  # EPIC 1: Foundation (v0.0.1) — 10 points
+  # Goal: Bootstrap working Chrome extension with Manifest V3,
+  #       Svelte 5, Vite, CI
+  # ═══════════════════════════════════════════════════════════
+
+  epic-1: backlog
+
+  # --- S1.1: Project scaffold with Vite + CRXJS + Svelte 5 (2 pts, P0) ---
+  # AC: npm run dev loads extension in Chrome; npm run build produces dist/
+  # Depends: none
+  1-1-project-scaffold-vite-crxjs-svelte5: backlog
+
+  # --- S1.2: Manifest V3 configuration (1 pt, P0) ---
+  # AC: manifest.json valid; permissions; content_scripts for upwork + fiverr
+  # Depends: S1.1
+  1-2-manifest-v3-configuration: backlog
+
+  # --- S1.3: Shared types & constants (1 pt, P0) ---
+  # AC: ClippedJob, JobStatus, Settings interfaces; status color map
+  # Depends: S1.1
+  1-3-shared-types-and-constants: backlog
+
+  # --- S1.4: Storage service layer (2 pts, P0) ---
+  # AC: CRUD on chrome.storage.local; findJobByUrl; getStats; getStorageUsage
+  # Depends: S1.3
+  1-4-storage-service-layer: backlog
+
+  # --- S1.5: CI pipeline GitHub Actions (1 pt, P0) ---
+  # AC: On push: typecheck + lint + test + build; upload dist/
+  # Depends: S1.1
+  1-5-ci-pipeline-github-actions: backlog
+
+  # --- S1.6: Popup shell empty state (1 pt, P0) ---
+  # AC: Click icon → popup 350px; branded header + empty state
+  # Depends: S1.1
+  1-6-popup-shell-empty-state: backlog
+
+  # --- S1.7: Background service worker shell (1 pt, P0) ---
+  # AC: service_worker registered; responds to ping message
+  # Depends: S1.1
+  1-7-background-service-worker-shell: backlog
+
+  # --- S1.8: Unit test setup (1 pt, P0) ---
+  # AC: Vitest + jsdom + testing-library configured; sample test passes
+  # Depends: S1.1
+  1-8-unit-test-setup: backlog
+
+  epic-1-retrospective: optional
+
+  # ═══════════════════════════════════════════════════════════
+  # EPIC 2: Job Clipping Engine (v0.1.0) — 18 points
+  # Goal: Parse Upwork + Fiverr pages, extract metadata,
+  #       clip with one click
+  # ═══════════════════════════════════════════════════════════
+
+  epic-2: backlog
+
+  # --- S2.1: Base parser class with resilience (2 pts, P0) ---
+  # AC: Abstract parser with canParse(), extract(), multi-selector fallback,
+  #     MutationObserver wait
+  # Depends: S1.3
+  2-1-base-parser-class-resilience: backlog
+
+  # --- S2.2: Upwork parser (3 pts, P0) ---
+  # AC: Extract title, budget, client, description, tags; test with 5+ fixtures
+  # Depends: S2.1
+  2-2-upwork-parser: backlog
+
+  # --- S2.3: Fiverr parser (3 pts, P0) ---
+  # AC: Extract gig title, price, seller, rating; test with 5+ fixtures
+  # Depends: S2.1
+  2-3-fiverr-parser: backlog
+
+  # --- S2.4: Content script URL detection & routing (1 pt, P0) ---
+  # AC: Detect upwork vs fiverr via URL; route to parser; no injection elsewhere
+  # Depends: S2.2, S2.3
+  2-4-content-script-url-detection-routing: backlog
+
+  # --- S2.5: Budget format normalizer (2 pts, P0) ---
+  # AC: Parse "$500-$1000", "$50/hr", "Not specified" → { min, max, type }
+  # Depends: S1.3
+  2-5-budget-format-normalizer: backlog
+
+  # --- S2.6: Floating clip button (2 pts, P0) ---
+  # AC: Inject styled button on supported pages; states: default, loading,
+  #     clipped, error
+  # Depends: S2.4
+  2-6-floating-clip-button: backlog
+
+  # --- S2.7: Clip flow end-to-end (3 pts, P0) ---
+  # AC: Click clip → extract → dedup URL → save → toast; < 50ms perceived
+  # Depends: S2.6, S1.4
+  2-7-clip-flow-end-to-end: backlog
+
+  # --- S2.8: Clip via popup action (2 pts, P0) ---
+  # AC: Popup shows "Clip this job" on supported page; clips current tab
+  # Depends: S2.4, S1.4
+  2-8-clip-via-popup-action: backlog
+
+  epic-2-retrospective: optional
+
+  # ═══════════════════════════════════════════════════════════
+  # EPIC 3: Pipeline Dashboard (v0.1.0) — 14 points
+  # Goal: Popup shows clipped jobs with status tracking,
+  #       detail view, notes
+  # ═══════════════════════════════════════════════════════════
+
+  epic-3: backlog
+
+  # --- S3.1: Popup layout & header (1 pt, P0) ---
+  # AC: 350px width; branded header with logo + settings icon
+  # Depends: S1.6
+  3-1-popup-layout-header: backlog
+
+  # --- S3.2: Job list component (2 pts, P0) ---
+  # AC: Renders ClippedJob[] sorted by date; scrollable; shows all card fields
+  # Depends: S3.1, S1.4
+  3-2-job-list-component: backlog
+
+  # --- S3.3: Job card collapsed (2 pts, P0) ---
+  # AC: Truncated title; platform badge; budget; status pill; notes preview
+  # Depends: S3.2
+  3-3-job-card-collapsed: backlog
+
+  # --- S3.4: Job detail expanded (3 pts, P0) ---
+  # AC: Click card → expand: full title, budget, client, description, tags
+  # Depends: S3.3
+  3-4-job-detail-expanded: backlog
+
+  # --- S3.5: Status dropdown (2 pts, P0) ---
+  # AC: Dropdown with 7 statuses; color dots; instant save; stats update
+  # Depends: S3.4
+  3-5-status-dropdown: backlog
+
+  # --- S3.6: Notes editor (1 pt, P1) ---
+  # AC: Textarea in detail view; auto-save on blur; persisted
+  # Depends: S3.4
+  3-6-notes-editor: backlog
+
+  # --- S3.7: Delete job with confirmation (1 pt, P1) ---
+  # AC: Delete button → dialog → confirm removes from storage + list
+  # Depends: S3.4
+  3-7-delete-job-confirmation: backlog
+
+  # --- S3.8: Storage usage footer (1 pt, P1) ---
+  # AC: Clip count + storage %; progress bar; amber 80%, red 95%
+  # Depends: S3.2
+  3-8-storage-usage-footer: backlog
+
+  # --- S3.9: Toast notification system (1 pt, P0) ---
+  # AC: Success/warning/error toasts; auto-dismiss 3s; no stacking
+  # Depends: S3.1
+  3-9-toast-notification-system: backlog
+
+  epic-3-retrospective: optional
+
+  # ═══════════════════════════════════════════════════════════
+  # EPIC 4: Search, Filter & Stats (v0.1.0) — 8 points
+  # Goal: Search jobs, filter by platform/status, pipeline stats
+  # ═══════════════════════════════════════════════════════════
+
+  epic-4: backlog
+
+  # --- S4.1: Search bar component (2 pts, P0) ---
+  # AC: Substring match on title; case-insensitive; debounced 300ms
+  # Depends: S3.2
+  4-1-search-bar-component: backlog
+
+  # --- S4.2: Platform filter tabs (1 pt, P0) ---
+  # AC: Tabs: All | Upwork | Fiverr; combines with search
+  # Depends: S3.2
+  4-2-platform-filter-tabs: backlog
+
+  # --- S4.3: Status filter (1 pt, P1) ---
+  # AC: Dropdown/tabs for status; combines with platform + search
+  # Depends: S4.2
+  4-3-status-filter: backlog
+
+  # --- S4.4: Basic stats totals (2 pts, P0) ---
+  # AC: Total clipped, by platform, by status; computed from storage
+  # Depends: S3.2
+  4-4-basic-stats-totals: backlog
+
+  # --- S4.5: Weekly summary card (2 pts, P0) ---
+  # AC: "This Week" card: X clipped, Y applied, Z hired; resets weekly
+  # Depends: S4.4
+  4-5-weekly-summary-card: backlog
+
+  epic-4-retrospective: optional
+
+  # ═══════════════════════════════════════════════════════════
+  # EPIC 5: Polish & Launch (v0.1.0) — 8 points
+  # Goal: Error handling, empty states, dark mode, CWS submission
+  # ═══════════════════════════════════════════════════════════
+
+  epic-5: backlog
+
+  # --- S5.1: Error handling parser failures (1 pt, P0) ---
+  # AC: Graceful degradation; partial data saved; error toast; never crash
+  # Depends: S2.2, S2.3
+  5-1-error-handling-parser-failures: backlog
+
+  # --- S5.2: Empty state polish (1 pt, P0) ---
+  # AC: Illustration + instruction text + platform icons
+  # Depends: S3.2
+  5-2-empty-state-polish: backlog
+
+  # --- S5.3: Loading states (1 pt, P0) ---
+  # AC: Skeleton/spinner while storage reads; no layout shift
+  # Depends: S3.2
+  5-3-loading-states: backlog
+
+  # --- S5.4: Dark mode CSS variables (2 pts, P2) ---
+  # AC: CSS custom properties; prefers-color-scheme detection; toggle
+  # Depends: S3.1
+  5-4-dark-mode-css-variables: backlog
+
+  # --- S5.5: CWS assets and listing (1 pt, P0) ---
+  # AC: Icons 16/48/128; screenshots (5); title + description; privacy policy
+  # Depends: All
+  5-5-cws-assets-and-listing: backlog
+
+  # --- S5.6: Manual QA pass (2 pts, P0) ---
+  # AC: Test 10+ Upwork + 10+ Fiverr pages; verify all flows; fix bugs
+  # Depends: All
+  5-6-manual-qa-pass: backlog
+
+  epic-5-retrospective: optional
